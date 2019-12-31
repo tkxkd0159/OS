@@ -1,6 +1,3 @@
-# TIL_CS
-Computer Science-related Study
-
 ## Basic
 1. Data Structures & Algorithms
 2. Computer Architecture
