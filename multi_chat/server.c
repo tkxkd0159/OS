@@ -10,11 +10,11 @@
 #include <netinet/in.h> // sockaddr_in
 #include <arpa/inet.h>  // inet_addr
 
-#define MAX_CLIENTS 100
+#define MAX_CLIENTS 1
 #define BUF_SIZE 2048
 #define NAME_LEN 32
 
-static _Atomic unsigned int cli_cnt = 0;  // 여러 스레드에서 클라이언트 생성 후 셀 때 정확히 변경되도록 _Atomic 선언
+static _Atomic unsigned int cli_cnt = 0;  // 여러 스레드에서 클라이언트 생성 후 셀 때 순차적 변경되도록 _Atomic 선언
 static int uids[100] = {};  // 내가 제한해놓은 인원에서 임의의 uid를 부여하기 위한 배열
 
 // client structure
@@ -90,9 +90,11 @@ int main(int argc, char* argv[]) {
         socklen_t cliaddr_len = sizeof(cli_addr);
         cli_sock = accept(serv_sock, (struct sockaddr*)&cli_addr, &cliaddr_len);
 
-        if ((cli_cnt + 1) == MAX_CLIENTS) {
+        if (cli_cnt == MAX_CLIENTS) {
             printf("ERROR : Maximum clients connected\n");
             print_ip_addr(cli_addr);
+            char* reject_msg = "Due to the server capacity limitation, you were disconnected after connection";
+            write(cli_sock, reject_msg, strlen(reject_msg));
             close(cli_sock);
             continue;
         }
@@ -151,7 +153,7 @@ void queue_remove(int uid){
 
 // 리틀엔디안으로 저장된 주소값을 시프트연산자를 통해 처리 후 출력
 void print_ip_addr(struct sockaddr_in addr) {
-    printf("%d.%d.%d.%d",
+    printf("SRC : %d.%d.%d.%d\n",
             addr.sin_addr.s_addr & 0xff,
             (addr.sin_addr.s_addr & 0xff00) >> 8,
             (addr.sin_addr.s_addr & 0xff0000) >> 16,

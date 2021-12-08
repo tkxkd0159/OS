@@ -45,6 +45,7 @@ int main() {
         return EXIT_FAILURE;
     } else {
         printf("Success to connect to server!\n");
+        printf("Chatting on...\n");
     }
 
     char msg[CHAT_LEN] = "";
@@ -53,7 +54,6 @@ int main() {
         printf("%s\n", msg);
     }
     memset(msg, 0, CHAT_LEN);
-    printf("Chatting on...\n");
     printf("input 'Q' to exit\n");
 
     pthread_t send_msg_thread;
