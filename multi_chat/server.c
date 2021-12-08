@@ -10,9 +10,8 @@
 #include <netinet/in.h> // sockaddr_in
 #include <arpa/inet.h>  // inet_addr
 
-#define MAX_CLIENTS 1
+#define MAX_CLIENTS 100
 #define BUF_SIZE 2048
-#define NAME_LEN 32
 
 static _Atomic unsigned int cli_cnt = 0;  // 여러 스레드에서 클라이언트 생성 후 셀 때 순차적 변경되도록 _Atomic 선언
 static int uids[100] = {};  // 내가 제한해놓은 인원에서 임의의 uid를 부여하기 위한 배열
@@ -22,7 +21,6 @@ typedef struct{
     struct sockaddr_in addr;
     int sockfd;
     int uid;
-    char name[NAME_LEN];
 } client_t;
 
 client_t* clients[MAX_CLIENTS];
