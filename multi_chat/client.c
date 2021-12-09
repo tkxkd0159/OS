@@ -143,4 +143,6 @@ void recv_msg_handler(void* arg){
         }
         memset(msg, 0, CHAT_LEN);
     }
+    // FLAG 변화를 위한 핸들러 호출
+    sigint_handler();
 }
